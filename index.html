@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Backbone-tutorial</title>
+    <link rel="stylesheet" href="vendor/bootstrap/3.0.2/css/bootstrap.css">
 </head>
 
 <body>
@@ -14,29 +15,51 @@
 
     <script src="vendor/jquery/2.0.3/jquery-2.0.3.js"></script>
     <script src="vendor/json2/json2.js"></script>
-    <script src="vendor/underscore/1.5.2/underscore.js"></script>
+    <script src="vendor/handlebars/1.1.2/handlebars-v1.1.2.js"></script>
+    <script src="vendor/lodash/1.0.0/lodash-plus-1.0.0.js"></script>
     <script src="vendor/backbone/1.1.0/backbone.js"></script>
 
     <script src="src/app.js"></script>
 
-    <script type="text/template" id="movie-list-template">
+    <script type="text/x-handlebars-template" id="movie-list-template">
         <h3>List Movies</h3>
-        <table>
+        <h2>{{movies.length}}</h2>
+        <table class="table striped">
             <thead>
-                <tr>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                </tr>
+            <tr>
+                <th>Title</th>
+                <th>Synopsis</th>
+                <th></th>
+                <th></th>
+            </tr>
             </thead>
             <tbody>
-                <% _.each(movies, function(movie) { %>
-                    <tr>
-                        <td><%= htmlEncode(movie.get('title')) %></td>
-                        <td><%= htmlEncode(movie.get('synopsis')) %></td>
-                    </tr>
-                <% }); %>
+            {{#each movies}}
+                <tr>
+                    <td>{{title}}</td>
+                    <td>{{synopsis}}</td>
+                    <td><img class="img-thumbnail" src="{{posters.thumbnail}}"></td>
+                    <td><a class="btn" href="#/detail/{{id}}">Detail</a></td>
+                </tr>
+            {{/each}}
             </tbody>
         </table>
+    </script>
+
+    <script type="text/x-handlebars-template" id="movie-detail-template">
+        <div class="row">
+            <div class="col-md-7">
+                <h2>{{movie.title}}</h2>
+            </div>
+            <div class="col-md-4">
+                <h3>{{movie.studio}}</h3>
+            </div>
+            <div class="col-md-1">
+                <h3>{{movie.year}}</h3>
+            </div>
+        </div>
+        <p>{{movie.synopsis}}</p>
+        <img class="img-thumbnail" src="{{movie.posters.original}}" >
     </script>
 
 </body>

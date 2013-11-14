@@ -13,6 +13,8 @@
         options.crossDomain = true;
     });
 
+    //////////////////////////
+
     var Movies = Backbone.Collection.extend({
         url:'/lists/movies/opening.jsonp?apikey=dqp76c8udzu7qdr8ps2j9d6b'
     });
@@ -27,24 +29,66 @@
         },
 
         render: function(){
-            console.log('movies list render loading ...');
             var that = this;
             var movies = new Movies();
             movies.fetch({
                 dataType: 'jsonp',
                 success: function(argResult){
-                    var template = _.template($('#movie-list-template').html(), {movies: argResult.models[0].attributes.movies});
-                    that.$el.html(template);
+                    var buildTemplate = Handlebars.compile(  $('#movie-list-template').html() );
+                    var tmpHtml = buildTemplate( {movies: argResult.models[0].attributes.movies} );
+                    that.$el.html( tmpHtml );
                 }
             });
+        },
+
+        afterRender: function () {
+
         }
     });
 
     var moviesList = new MoviesList();
 
+    /////////////////////////
+
+    var Movie = Backbone.Model.extend({
+        urlRoot:"/movies/{0}.jsonp?apikey=dqp76c8udzu7qdr8ps2j9d6b",
+        url: function(){
+            console.log("into url override function");
+            var formatUrl = _.format(this.urlRoot, this.id);
+            return formatUrl;
+        }
+    });
+
+    var MovieDetail = Backbone.View.extend({
+
+        el:'.page',
+
+        initialize: function(){
+
+        },
+
+        render: function(argOptions){
+            var that = this;
+            var movie = new Movie({id: argOptions.id});
+            movie.fetch({
+                dataType: 'jsonp',
+                success: function(argResult){
+                    var buildTemplate = Handlebars.compile(  $('#movie-detail-template').html() );
+                    var tmpHtml = buildTemplate( {movie: argResult.attributes} );
+                    that.$el.html( tmpHtml );
+                }
+            });
+        }
+    });
+
+    var movieDetail = new MovieDetail();
+
+    //// Routes ///
+
     var Router = Backbone.Router.extend({
         routes: {
-            "":"home"
+            "":"home",
+            "detail/:id":"detail"
         }
     });
 
@@ -53,6 +97,11 @@
     router.on("route:home", function(){
         console.log("home route loading ....");
         moviesList.render();
+    });
+
+    router.on("route:detail", function(argId){
+        console.log("detail route loading ....");
+        movieDetail.render({id: argId});
     });
 
     Backbone.history.start();
