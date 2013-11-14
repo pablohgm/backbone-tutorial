@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
     <title>Backbone-tutorial</title>
 </head>
 
@@ -17,5 +18,26 @@
     <script src="vendor/backbone/1.1.0/backbone.js"></script>
 
     <script src="src/app.js"></script>
+
+    <script type="text/template" id="movie-list-template">
+        <h3>List Movies</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% _.each(movies, function(movie) { %>
+                    <tr>
+                        <td><%= htmlEncode(movie.get('title')) %></td>
+                        <td><%= htmlEncode(movie.get('synopsis')) %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </script>
+
 </body>
 </html>

@@ -8,6 +8,15 @@
 
 (function($){
 
+    $.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
+        options.url = 'http://api.rottentomatoes.com/api/public/v1.0' + options.url;
+        options.crossDomain = true;
+    });
+
+    var Movies = Backbone.Collection.extend({
+        url:'/lists/movies/opening.jsonp?apikey=dqp76c8udzu7qdr8ps2j9d6b'
+    });
+
     var MoviesList = Backbone.View.extend({
 
         el: '.page',
@@ -18,15 +27,20 @@
         },
 
         render: function(){
-            debugger;
             console.log('movies list render loading ...');
-            this.$el.html("Movies list comming soon");
+            var that = this;
+            var movies = new Movies();
+            movies.fetch({
+                dataType: 'jsonp',
+                success: function(argResult){
+                    var template = _.template($('#movie-list-template').html(), {movies: argResult.models[0].attributes.movies});
+                    that.$el.html(template);
+                }
+            });
         }
     });
 
     var moviesList = new MoviesList();
-
-
 
     var Router = Backbone.Router.extend({
         routes: {
